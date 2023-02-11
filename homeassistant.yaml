@@ -1,0 +1,70 @@
+vacuum:
+  - platform: template
+    vacuums:
+      living_room_vacuum:
+        friendly_name: Vacuum
+        unique_id: yopJpsGKDKUOVktBvaqo0lNpww7ibv
+        value_template: |
+          {% set state_entity = "sensor.eufy_robovac_g10_hybrid_1257f6_state" %}
+          {% if is_state(state_entity, ["Charging", "Charged"]) %}
+              docked
+          {% elif is_state(state_entity, "Running") %}
+              cleaning
+          {% elif is_state(state_entity, ["Idle", "Sleeping"]) %}
+              idle
+          {% elif is_state(state_entity, "Docking") %}
+              returning
+          {% elif is_state(state_entity, "Paused") %}
+              paused
+          {% endif %}
+
+        battery_level_template: '{{ states("sensor.eufy_robovac_g10_hybrid_1257f6_battery") }}'
+        fan_speed_template: '{{ states("select.eufy_robovac_g10_hybrid_1257f6_fan_speed") }}'
+        availability_template: '{{ not is_state("sensor.eufy_robovac_g10_hybrid_1257f6_state", "unavailable") }}'
+
+        fan_speeds:
+          - Standard
+          - Max
+
+        start:
+          - service: button.press
+            target:
+              entity_id: button.eufy_robovac_g10_hybrid_1257f6_start_cleaning
+
+        pause:
+          - service: button.press
+            target:
+              entity_id: button.eufy_robovac_g10_hybrid_1257f6_pause
+
+        stop:
+          - service: button.press
+            target:
+              entity_id: button.eufy_robovac_g10_hybrid_1257f6_pause
+
+        return_to_base:
+          - service: button.press
+            target:
+              entity_id: button.eufy_robovac_g10_hybrid_1257f6_return_to_dock
+
+        clean_spot:
+          - service: select.select_option
+            target:
+              entity_id: select.eufy_robovac_g10_hybrid_1257f6_cleaning_mode
+            data:
+              option: "Spot"
+
+        locate:
+          - service: switch.turn_on
+            target:
+              entity_id: switch.eufy_robovac_g10_hybrid_1257f6_locate
+          - delay: 1
+          - service: switch.turn_off
+            target:
+              entity_id: switch.eufy_robovac_g10_hybrid_1257f6_locate
+
+        set_fan_speed:
+          - service: select.select_option
+            target:
+              entity_id: select.eufy_robovac_g10_hybrid_1257f6_fan_speed
+            data:
+              option: "{{ fan_speed }}"
