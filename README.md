@@ -20,7 +20,7 @@ Once done, close it back up and connect it to Home Assistant.
 
 ## Home Assistant configuration
 
-ESPHome doesn't yet support the `vacuum` platform which means it's unable to create a `vacuum` entity in HASS like it can for lights/etc - therefore this config only exposes ad-hoc sensors, selects and switches (marked as `entity_category: config`) so they don't pollute your dashboard and you need to manually create a vacuum entity in Hass using the provided `homeassistant.yaml` configuration - this uses the [template vacuum](https://www.home-assistant.io/integrations/vacuum.template/) integration. Adjust it to match your vacuum's entity IDs when your ESPHome device was added to Home Assistant.
+ESPHome [doesn't (yet?) support](https://github.com/esphome/feature-requests/issues/2096) the `vacuum` platform which means it's unable to create a `vacuum` entity in HASS like it can for lights/etc - therefore this config only exposes ad-hoc sensors, selects and switches (marked as `entity_category: config`) so they don't pollute your dashboard and you need to manually create a vacuum entity in Hass using the provided `homeassistant.yaml` configuration - this uses the [template vacuum](https://www.home-assistant.io/integrations/vacuum.template/) integration. Adjust it to match your vacuum's entity IDs when your ESPHome device was added to Home Assistant.
 
 
 ## Future reverse engineering
