@@ -2,7 +2,6 @@ esphome:
   name: eufy-robovac-g10-hybrid
   # will be supported in an upcoming release
   friendly_name: Eufy Robovac G10 Hybrid
-  name_add_mac_suffix: true
 
 esp8266:
   board: esp01_1m
@@ -12,7 +11,8 @@ api:
     key: !secret robovac_encryption_key
 
 ota:
-  password: !secret robovac_ota_password
+  - platform: esphome
+    password: !secret robovac_ota_password
 
 wifi:
   ssid: !secret wifi_ssid
@@ -23,12 +23,12 @@ wifi:
     ssid: Eufy-Robovac Fallback Hotspot
     password: !secret robovac_fallback_ap_password
 
-captive_portal: null
+captive_portal:
 
 # Tuya supports sending time to the application processor and the vacuum does use it (not sure for why though) so let's configure a time reference
 time:
-  - platform: sntp
-    id: sntp_time
+  - platform: homeassistant
+    id: time_source
 
 # UART will be used to talk to the application processor, so we need to disable any logging over it
 logger:
@@ -46,7 +46,7 @@ uart:
 tuya:
   id: vacuum_tuya
   uart_id: vacuum_uart
-  time_id: sntp_time
+  time_id: time_source
 
 number:
   - platform: tuya
@@ -67,7 +67,7 @@ sensor:
     icon: mdi:battery
     device_class: battery
     state_class: measurement
-    entity_category: config
+    entity_category: diagnostic
 
   - platform: tuya
     name: Last clean time
@@ -76,13 +76,13 @@ sensor:
     icon: mdi:timer-sync
     device_class: duration
     state_class: total_increasing
-    entity_category: config
+    entity_category: diagnostic
 
   - platform: tuya
     name: Last clean area
     sensor_datapoint: 110
     icon: mdi:map-marker
-    entity_category: config
+    entity_category: diagnostic
 
   - platform: tuya
     name: Total clean time
@@ -139,28 +139,28 @@ button:
   - platform: template
     name: Reset side brush time
     icon: mdi:broom
-    entity_category: diagnostic
+    entity_category: config
     on_press:
       - lambda: id(vacuum_tuya).force_set_enum_datapoint_value(115, 0);
 
   - platform: template
     name: Reset main brush time
     icon: mdi:broom
-    entity_category: diagnostic
+    entity_category: config
     on_press:
       - lambda: id(vacuum_tuya).force_set_enum_datapoint_value(115, 1);
 
   - platform: template
     name: Reset filter time
     icon: mdi:air-filter
-    entity_category: diagnostic
+    entity_category: config
     on_press:
       - lambda: id(vacuum_tuya).force_set_enum_datapoint_value(115, 2);
 
   - platform: template
     name: Reset sensor time
     icon: mdi:leak
-    entity_category: diagnostic
+    entity_category: config
     on_press:
       - lambda: id(vacuum_tuya).force_set_enum_datapoint_value(115, 3);
 
@@ -229,7 +229,7 @@ select:
 text_sensor:
   - platform: template
     name: State
-    entity_category: config
+    entity_category: diagnostic
     id: state_sensor
 
 switch:
